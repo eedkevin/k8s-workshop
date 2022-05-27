@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev
+  name: llm-athena-svc
+  labels:
+    project: athena
+    app: llm-athena-svc
+spec:
+  selector:
+    matchLabels:
+      namespace: dev
+      project: athena
+      app: llm-athena-svc
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        namespace: dev
+        project: athena
+        app: llm-athena-svc
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: llm-athena-svc
+          image: mycluster-registry.localhost:5000/llm-athena-svc:latest
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: appId
+              value: llm-athena-svc
+            - name: system.server_mode
+              value: debug
+            - name: application.redis.addr
+              value: localhost:6379
+            - name: application.redis.db
+              value: "0"
+            - name: application.redis.username
+              value: 
+            - name: application.redis.password
+              value: 
+            - name: application.redis.cluster.addrs
+              value: localhost:6379,localhost:6379
+            - name: application.mysql.host
+              value: localhost
+            - name: application.mysql.port
+              value: "3306"
+            - name: application.mysql.username
+              value: root
+            - name: application.mysql.password
+              value: root
+            - name: application.mysql.schema
+              value: 
+            - name: application.mysql.log_level
+              value: "4"
+            - name: application.mysql.resource_id
+              value: 
