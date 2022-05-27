@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev
+  name: llm-athena-api
+  labels:
+    project: athena
+    app: llm-athena-api
+spec:
+  selector:
+    matchLabels:
+      namespace: dev
+      project: athena
+      app: llm-athena-api
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        namespace: dev
+        project: athena
+        app: llm-athena-api
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: llm-athena-api
+          image: mycluster-registry.localhost:5000/llm-athena-api:latest
+          ports:
+            - name: http
+              containerPort: 3000
+            - name: metrics
+              containerPort: 16670
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: hll.env
+              value: dev
+            - name: hll.appid
+              value: llm-athena-api
+            - name: hll.apollo.host
+              value: http://apollo-server
+            - name: hll.apollo.port
+              value: "8080"
+            - name: hll.consul.host
+              value: http://consul-server
+            - name: hll.consul.port
+              value: "8500"
+            - name: hll.monitor.port
+              value: "16670"

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev
+  name: consul-server
+  labels:
+    project: athena
+    app: consul-server
+spec:
+  selector:
+    matchLabels:
+      namespace: dev
+      project: athena
+      app: consul-server
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        namespace: dev
+        project: athena
+        app: consul-server
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: consul-server
+          image: consul:latest
+          ports:
+            - name: http
+              containerPort: 8500
+          command:
+            - agent -server -bootstrap -ui -node=1 -client='0.0.0.0
