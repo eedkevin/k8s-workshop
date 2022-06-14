@@ -2,16 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: dev
-  name: llm-athena-api
+  name: apolloconfig-server
   labels:
     project: athena
-    app: llm-athena-api
+    app: apolloconfig-server
 spec:
   selector:
     matchLabels:
       namespace: dev
       project: athena
-      app: llm-athena-api
+      app: apolloconfig-server
   replicas: 1
   strategy:
     type: RollingUpdate
@@ -20,17 +20,15 @@ spec:
       labels:
         namespace: dev
         project: athena
-        app: llm-athena-api
+        app: apolloconfig-server
     spec:
       restartPolicy: Always
       containers:
-        - name: llm-athena-api
-          image: mycluster-registry.localhost:5000/llm-athena-api:latest
+        - name: apolloconfig-server
+          image: minixxie/apollo-server-go:0.0.2
           ports:
             - name: http
-              containerPort: 3000
-            - name: metrics
-              containerPort: 16670
+              containerPort: 80
           resources:
             limits:
               cpu: 200m
@@ -38,18 +36,12 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-          env:
-            - name: hll.env
-              value: dev
-            - name: hll.appid
-              value: llm-athena-api
-            - name: hll.apollo.host
-              value: http://apollo-server
-            - name: hll.apollo.port
-              value: "8080"
-            - name: hll.consul.host
-              value: http://consul-server
-            - name: hll.consul.port
-              value: "8500"
-            - name: hll.monitor.port
-              value: "16670"
+          volumeMounts:
+            - mountPath: /config.json
+              name: config-volume
+              subPath: config.json
+          imagePullPolicy: Always
+      volumes:
+        - name: config-volume
+          configMap:
+            name: apolloconfig-server-cfg

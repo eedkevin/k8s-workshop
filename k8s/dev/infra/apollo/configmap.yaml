@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: dev
+  name: apolloconfig-server-cfg
+data:
+  config.json: |
+    {
+      "llm-athena-api": {
+        "default": {
+          "application": {
+            "releaseKey": "20200309212653-7fec91b6d277b5ab",
+            "configurations": {
+              "redis.addr": "localhost:6379",
+              "redis.cluster.addrs": "localhost:30000,localhost:30001,localhost:30002",
+              "services.athena.url": "http://llm-athena-svc",
+              "services.sso.url": "https://in-sso.lalamove.work",
+              "services.sso.appId": "100241",
+              "services.sso.signKey": "832420df506b899c17e488abdaa19df4",
+              "services.uac.url": "http://security-iam-internal-svc-stg.myhll.sg",
+              "services.uac.appId": "1000040",
+              "services.uac.signKey": "9bM92XZN8zNRAzgk84PQK0cF1NdoufVe",
+              "services.ucore.url": "http://ucore2-stg.myhll.sg"
+            }
+          }
+        }
+      },
+      "llm-athena-svc": {
+        "default": {
+          "application": {
+            "releaseKey": "20200309212653-7fec91b6d277b5ab",
+            "configurations": {
+              "system.server_mode": "debug",
+              "application.redis.addr": "localhost:6379",
+              "application.redis.db": "0",
+              "application.redis.username": "",
+              "application.redis.password": "",
+              "application.redis.cluster.addrs": "localhost:6379,localhost:6379",
+              "application.mysql.host": "localhost",
+              "application.mysql.port": "3306",
+              "application.mysql.username": "root",
+              "application.mysql.password": "root",
+              "application.mysql.schema": "",
+              "application.mysql.log_level": "4",
+              "application.mysql.resource_id": ""
+            }
+          }
+        }
+      }
+    }

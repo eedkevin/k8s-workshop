@@ -38,18 +38,6 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-          env:
-            - name: hll.env
-              value: dev
-            - name: hll.appid
-              value: llm-athena-api
-            - name: hll.apollo.host
-              value: http://apollo-server
-            - name: hll.apollo.port
-              value: "8080"
-            - name: hll.consul.host
-              value: http://consul-server
-            - name: hll.consul.port
-              value: "8500"
-            - name: hll.monitor.port
-              value: "16670"
+          envFrom:
+            - configMapRef:
+                name: llm-athena-api-cfg

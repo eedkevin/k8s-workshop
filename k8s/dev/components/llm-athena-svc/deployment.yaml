@@ -36,32 +36,10 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-          env:
-            - name: appId
-              value: llm-athena-svc
-            - name: system.server_mode
-              value: debug
-            - name: application.redis.addr
-              value: localhost:6379
-            - name: application.redis.db
-              value: "0"
-            - name: application.redis.username
-              value: 
-            - name: application.redis.password
-              value: 
-            - name: application.redis.cluster.addrs
-              value: localhost:6379,localhost:6379
-            - name: application.mysql.host
-              value: localhost
-            - name: application.mysql.port
-              value: "3306"
-            - name: application.mysql.username
-              value: root
-            - name: application.mysql.password
-              value: root
-            - name: application.mysql.schema
-              value: 
-            - name: application.mysql.log_level
-              value: "4"
-            - name: application.mysql.resource_id
-              value: 
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - /app/app -consulHost=${consulHost} -consulPort=${consulPort} -consulToken=${consulToken} -apolloHost=${apolloHost} -apolloPort=${apolloPort}
+          envFrom:
+            - configMapRef:
+                name: llm-athena-svc-cfg

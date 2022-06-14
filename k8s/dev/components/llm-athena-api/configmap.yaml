@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: dev
+  name: llm-athena-api-cfg
+data:
+  hll.env: dev
+  hll.app.id: llm-athena-api
+  hll.apollo.host: http://apolloconfig-server
+  hll.apollo.port: "8080"
+  hll.consul.host: http://consul-server
+  hll.consul.port: "8500"
+  hll.monitor.port: "16670"

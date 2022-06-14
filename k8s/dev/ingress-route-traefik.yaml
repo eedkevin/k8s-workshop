@@ -1,0 +1,29 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingress-route
+  namespace: dev
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`consul.lalamove.local`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: consul-server
+      port: http
+  - match: Host(`apollo.lalamove.local`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: apolloconfig-server
+      port: http
+  - match: Host(`llm-athena-api.lalamove.local`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: llm-athena-api
+      port: http
+  - match: Host(`llm-athena-svc.lalamove.local`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: llm-athena-svc
+      port: http

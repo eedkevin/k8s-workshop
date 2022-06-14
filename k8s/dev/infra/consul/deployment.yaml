@@ -29,5 +29,5 @@ spec:
           ports:
             - name: http
               containerPort: 8500
-          command:
-            - agent -server -bootstrap -ui -node=1 -client='0.0.0.0
+          command: ["/bin/sh"]
+          args: ["-c", "consul agent -server -bootstrap -ui -node=1 -client='0.0.0.0' -data-dir=/tmp/consul/data/"]

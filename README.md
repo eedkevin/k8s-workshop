@@ -2,28 +2,28 @@
 ## Prerequisite
 - install k3d, a lightweight wrapper to run k3s (Rancher Lab’s minimal Kubernetes distribution) in docker.
 ```sh
-brew insatll k3d
+$ brew insatll k3d
 ```
 
 - install kubernetes-cli, aka kubectl
 ```sh
-brew install kubernetes-cli
+$ brew install kubernetes-cli
 ```
 
 - install kubie, a much more powerful alternative to kubectx and kubens
 ```sh
-brew install kubie
+$ brew install kubie
 ```
 
 ## Lift k8s cluster up on local
-- create local docker register
+- create k8s cluster with local docker registry
 ```sh
-k3d cluster create mycluster --registry-create mycluster-registry.localhost:5000
+$ K3D_FIX_DNS=1 k3d cluster create mycluster --registry-create mycluster-registry.localhost:5000 -p "80:80@loadbalancer" --agents 2
 ```
 
 - healthcheck your local k8s cluster
 ```sh
-kubectl get nodes
+$ kubectl get nodes
 ```
 
 <!-- - create local docker registry
@@ -31,53 +31,118 @@ kubectl get nodes
 k3d registry create registry.localhost --port 5000
 ``` -->
 
-## Prepare the docker images
-- build llm-athena-api
+## Resolve local domains
+
+### (Option A) Edit /etc/hosts
+- edit and append your local domains in `/etc/hosts`
 ```sh
-cd <path-to-athena-api> 
-docker build -t llm-athena-api . 
+# append domains to /etc/hosts
+
+$ sudo tee /etc/hosts << EOF
+llm-athena-api.lalamove.local 127.0.0.1
+llm-athena-svc.lalamove.local 127.0.0.1
+consul-server.lalamove.local 127.0.0.1
+apolloconfig-server.lalamove.local 127.0.0.1
+EOF
 ```
-- push llm-athena-api to local docker registry
+
+### (Option B) Install and setup local DNS
+- install dnsmasq
 ```sh
-docker tag llm-athena-api localhost:5000/llm-athena-api:latest
+$ brew install dnsmasq
+```
+
+- setup dnsmasq
+```sh
+# update dns config
+
+$ tee /usr/local/etc/dnsmasq.conf << EOF
+address=/lalamove.local/127.0.0.1
+EOF
 ```
 
 ```sh
-docker push localhost:5000/llm-athena-api:latest
+# Setup DNS resolving
+
+$ sudo mkdir -p /etc/resolver
+$ sudo tee /etc/resolver/lalamove.local > /dev/null <<EOF
+nameserver 127.0.0.1
+domain lalamove.local
+search_order 1
+EOF
+```
+
+```sh
+# Reload configuration and clear cache
+
+$ sudo launchctl unload /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+$ sudo launchctl load /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+$ dscacheutil -flushcache
+```
+
+- start dnsmasq
+```sh
+$ sudo brew services start dnsmasq
+```
+
+Now health check your domain resolver
+```sh
+$ ping llm-athena-api.lalamove.local
+```
+
+## Prepare docker images of your services
+- build llm-athena-api
+```sh
+$ cd <path-to-athena-api> 
+$ docker build -t llm-athena-api . 
+```
+
+- push llm-athena-api to local docker registry
+```sh
+$ docker tag llm-athena-api localhost:5000/llm-athena-api:latest
+$ docker push localhost:5000/llm-athena-api:latest
 ```
 
 - build llm-athena-svc
 ```sh
-cd <path-to-athena-svc> 
-docker build -t llm-athena-svc . 
-```
-- push llm-athena-api to local docker registry
-```sh
-docker tag llm-athena-svc localhost:5000/llm-athena-svc:latest
+$ cd <path-to-athena-svc> 
+$ docker build -t llm-athena-svc . 
 ```
 
+- push llm-athena-api to local docker registry
 ```sh
-docker push localhost:5000/llm-athena-svc:latest
+$ docker tag llm-athena-svc localhost:5000/llm-athena-svc:latest
+$ docker push localhost:5000/llm-athena-svc:latest
 ```
 
 ## Deploy to k8s cluster
 - create k8s namespace
 ```sh
-kubectl apply -f k8s/dev/namespace.yaml
+$ kubectl apply -f k8s/dev/namespace.yaml
 ```
 
 - switch kubectl context and namespace
 ```sh
-kubie ctx
-kubie ns dev
+$ kubie ctx
+$ kubie ns dev
+```
+
+- deploy consul server
+```sh
+$ kubuctl apply -f k8s/dev/infra/consul
+```
+
+- deploy apolloconfig server
+```sh
+$ kubuctl apply -f k8s/dev/infra/apollo
 ```
 
 - deploy llm-athena-api
 ```sh
-kubuctl apply -f k8s/dev/components/llm-athena-api
+$ kubuctl apply -f k8s/dev/components/llm-athena-api
 ```
 
 - deploy llm-athena-svc
 ```sh
-kubuctl apply -f k8s/dev/components/llm-athena-svc
+$ kubuctl apply -f k8s/dev/components/llm-athena-svc
 ```

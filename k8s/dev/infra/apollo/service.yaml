@@ -2,18 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: dev
-  name: llm-athena-api
+  name: apolloconfig-server
 spec:
   selector:
     namespace: dev
     project: athena
-    app: llm-athena-api
+    app: apolloconfig-server
   ports:
     - name: http
       protocol: TCP
-      port: 80
-      targetPort: 3000
-    - name: metrics
-      protocol: TCP
-      port: 16670
-      targetPort: 16670
+      port: 8080
+      targetPort: 80
