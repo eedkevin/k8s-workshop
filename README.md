@@ -116,7 +116,9 @@ $ docker push localhost:5000/llm-athena-svc:latest
 ```
 
 ## Deploy to k8s cluster
-- create k8s namespace
+
+### DEV environment
+- create dev namespace
 ```sh
 $ kubectl apply -f k8s/dev/namespace.yaml
 ```
@@ -145,4 +147,20 @@ $ kubuctl apply -f k8s/dev/components/llm-athena-api
 - deploy llm-athena-svc
 ```sh
 $ kubuctl apply -f k8s/dev/components/llm-athena-svc
+```
+
+### STG environment
+- create stg namespace
+```sh
+$ kubectl apply -f k8s/stg/namespace.yaml
+```
+
+- create ucore service
+```
+$ kubectl apply -f k8s/stg/components/bme-ucore-svc/service.yaml
+```
+
+- create dcore service
+```
+$ kubectl apply -f k8s/stg/components/bme-dcore-svc/service.yaml
 ```
