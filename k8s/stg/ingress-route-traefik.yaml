@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingress-route
+  namespace: stg
+spec:
+  routes:
+  - match: Host(`bme-ucore-svc.stg.lalamove.local`) 
+    kind: Rule
+    services:
+    - name: bme-ucore-svc
+  - match: Host(`bme-dcore-svc.stg.lalamove.local`)
+    kind: Rule
+    services:
+    - name: bme-dcore-svc
