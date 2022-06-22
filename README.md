@@ -131,22 +131,27 @@ $ kubie ns dev
 
 - deploy consul server
 ```sh
-$ kubuctl apply -f k8s/dev/infra/consul
+$ kubectl apply -f k8s/dev/infra/consul
 ```
 
 - deploy apolloconfig server
 ```sh
-$ kubuctl apply -f k8s/dev/infra/apollo
+$ kubectl apply -f k8s/dev/infra/apollo
 ```
 
 - deploy llm-athena-api
 ```sh
-$ kubuctl apply -f k8s/dev/components/llm-athena-api
+$ kubectl apply -f k8s/dev/components/llm-athena-api
 ```
 
 - deploy llm-athena-svc
 ```sh
-$ kubuctl apply -f k8s/dev/components/llm-athena-svc
+$ kubectl apply -f k8s/dev/components/llm-athena-svc
+```
+
+- create ingress controller
+```sh
+$ kubectl apply -f k8s/dev/ingress.yaml
 ```
 
 ### STG environment
