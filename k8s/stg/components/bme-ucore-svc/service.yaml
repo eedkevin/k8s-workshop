@@ -6,3 +6,16 @@ metadata:
 spec:
   type: ExternalName
   externalName: ucore-stg.myhll.sg
+  # selector:
+  #   namespace: dev
+  #   project: athena
+  #   app: fake-ucore
+  # ports:
+  #   - name: http
+  #     protocol: TCP
+  #     port: 80
+  #     targetPort: 3000
+  #   - name: metrics
+  #     protocol: TCP
+  #     port: 16670
+  #     targetPort: 16670

@@ -27,3 +27,8 @@ spec:
     services:
     - name: llm-athena-svc
       port: http
+  - match: Host(`ucore.lalamove.local`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: fake-ucore-svc
+      port: http

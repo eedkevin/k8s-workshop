@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: fake-ucore-svc
+spec:
+  selector:
+    namespace: dev
+    project: athena
+    app: fake-ucore
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+    - name: metrics
+      protocol: TCP
+      port: 16670
+      targetPort: 16670

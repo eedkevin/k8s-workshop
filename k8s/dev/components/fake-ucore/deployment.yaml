@@ -2,16 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: dev
-  name: llm-athena-svc
+  name: fake-ucore
   labels:
     project: athena
-    app: llm-athena-svc
+    app: fake-ucore
 spec:
   selector:
     matchLabels:
       namespace: dev
       project: athena
-      app: llm-athena-svc
+      app: fake-ucore
   replicas: 1
   strategy:
     type: RollingUpdate
@@ -20,15 +20,17 @@ spec:
       labels:
         namespace: dev
         project: athena
-        app: llm-athena-svc
+        app: fake-ucore
     spec:
       restartPolicy: Always
       containers:
-        - name: llm-athena-svc
-          image: mycluster-registry.localhost:5000/llm-athena-svc:latest
+        - name: fake-ucore
+          image: mycluster-registry.localhost:5000/fake-ucore:latest
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 3000
+            - name: metrics
+              containerPort: 16670
           resources:
             limits:
               cpu: 200m
@@ -36,10 +38,6 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-          command: ["/bin/sh"]
-          args:
-            - -c
-            - /app/app -consulHost=http://consul-server -apolloHost=http://apolloconfig-server
           envFrom:
             - configMapRef:
-                name: llm-athena-svc-cfg
+                name: fake-ucore-cfg

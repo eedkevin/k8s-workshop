@@ -20,7 +20,7 @@ data:
               "services.uac.url": "http://security-iam-internal-svc-stg.myhll.sg",
               "services.uac.appId": "1000040",
               "services.uac.signKey": "9bM92XZN8zNRAzgk84PQK0cF1NdoufVe",
-              "services.ucore.url": "http://ucore2-stg.myhll.sg"
+              "services.ucore.url": "http://ucore-stg.myhll.sg"
             }
           }
         }
